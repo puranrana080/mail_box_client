@@ -6,8 +6,7 @@ import { Container, Button, Row, Col, Form } from "react-bootstrap";
 const SignUp = (props) => {
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
-    cpassword: "",
+    password: ""
   });
 
   const handleChange = (e) => {
@@ -16,24 +15,21 @@ const SignUp = (props) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (formData.password !== formData.cpassword) {
-        alert("Password not matching");
-        return;
-      }
-      const data = new FormData();
-      data.append("email", formData.email);
-      data.append("password", formData.password);
+      console.log("Login req starts")
+     
       const response = await axios.post(
-        "http://localhost:4000/api/user/register",
+        "http://localhost:4000/api/user/login",
         { email: formData.email, password: formData.password }
       );
       console.log(response.data);
       if (response.status === 200) {
-        toast.success("User registered successfully");
+        toast.success("User Logged In");
       }
-      setFormData({ email: "", password: "", cpassword: "" });
+      localStorage.setItem('token',response.data.token)
+      props.handleLoginStatus()
+      setFormData({ email: "", password: ""});
     } catch (err) {
-      console.log("Error", err);
+      console.log("Error is this", err.message);
     }
   };
   console.log(formData);
@@ -50,7 +46,7 @@ const SignUp = (props) => {
             className="mx-auto p-4 rounded-1"
             style={{ border: "1px solid gray" }}
           >
-            <h3 className="text-center mb-4">Sign Up</h3>
+            <h3 className="text-center mb-4">Login</h3>
             <Form onSubmit={handleFormSubmit}>
               <Form.Group className="mb-3" controlId="email">
                 <Form.Label>Email</Form.Label>
@@ -74,23 +70,13 @@ const SignUp = (props) => {
                   required
                 />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="confirmPassword">
-                <Form.Label>Confirm Password</Form.Label>
-                <Form.Control
-                  onChange={handleChange}
-                  value={formData.cpassword}
-                  type="password"
-                  name="cpassword"
-                  placeholder="Confirm Password"
-                  required
-                />
-              </Form.Group>
+             
               <Button
                 type="submit"
                 variant="primary"
                 className="w-100 p-2 rounded-pill"
               >
-                Sign Up
+                Login
               </Button>
             </Form>
           </Col>
@@ -98,7 +84,7 @@ const SignUp = (props) => {
         <Row style={{ width: "100%" }}>
           <Col md={4} className="mx-auto p-4">
             <Button onClick={props.handleClick} variant="outline-success" style={{ width: "100%" }}>
-              Already have an Account ? Login
+              Don't have an Account ? Sign Up
             </Button>
           </Col>
         </Row>

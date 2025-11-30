@@ -1,10 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import SignUp from './components/SignUp'
+import Login from "./components/Login"
+import Home from "./components/Home"
 
 const App = () => {
+  const [login,setLogin] = useState(false)
+  const [loginStatus,setLoginStatus] = useState(false)
+   if (loginStatus) {
+    return <Home />;
+  }
   return (
     <>
-    <SignUp/>
+   {login?<Login handleClick={()=>setLogin(false)} handleLoginStatus={()=>setLoginStatus(true)} />:<SignUp handleClick={()=>setLogin(true)}/>}
+   
     </>
   )
 }

@@ -5,7 +5,9 @@ import Home from "./components/Home"
 
 const App = () => {
   const [login,setLogin] = useState(false)
-  const [loginStatus,setLoginStatus] = useState(false)
+  const [loginStatus,setLoginStatus] = useState(() => {
+  return localStorage.getItem("token") ? true : false;
+})
    if (loginStatus) {
     return <Home />;
   }

@@ -5,6 +5,7 @@ import cors from "cors";
 dotenv.config();
 
 import userRoutes from "./routes/user.js";
+import mailRoutes from "./routes/mail.js"
 
 const app = express();
 
@@ -19,7 +20,9 @@ app.use(
 app.get("/", (req, res) => {
   return res.send("Hello");
 });
-app.use("/api", userRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/mail",mailRoutes)
+
 
 const PORT = process.env.PORT;
 

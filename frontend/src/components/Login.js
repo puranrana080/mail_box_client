@@ -6,7 +6,7 @@ import { Container, Button, Row, Col, Form } from "react-bootstrap";
 const SignUp = (props) => {
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -15,8 +15,8 @@ const SignUp = (props) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Login req starts")
-     
+      console.log("Login req starts");
+
       const response = await axios.post(
         "http://localhost:4000/api/user/login",
         { email: formData.email, password: formData.password }
@@ -25,9 +25,10 @@ const SignUp = (props) => {
       if (response.status === 200) {
         toast.success("User Logged In");
       }
-      localStorage.setItem('token',response.data.token)
-      props.handleLoginStatus()
-      setFormData({ email: "", password: ""});
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("email", response.data.userEmail);
+      props.handleLoginStatus();
+      setFormData({ email: "", password: "" });
     } catch (err) {
       console.log("Error is this", err.message);
     }
@@ -70,7 +71,7 @@ const SignUp = (props) => {
                   required
                 />
               </Form.Group>
-             
+
               <Button
                 type="submit"
                 variant="primary"
@@ -83,7 +84,11 @@ const SignUp = (props) => {
         </Row>
         <Row style={{ width: "100%" }}>
           <Col md={4} className="mx-auto p-4">
-            <Button onClick={props.handleClick} variant="outline-success" style={{ width: "100%" }}>
+            <Button
+              onClick={props.handleClick}
+              variant="outline-success"
+              style={{ width: "100%" }}
+            >
               Don't have an Account ? Sign Up
             </Button>
           </Col>

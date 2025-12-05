@@ -3,7 +3,12 @@ import mongoose from "mongoose";
 const mailSchema = mongoose.Schema(
   {
     from: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    to: [{ type: String, required: true }],
+    to: [
+      {
+        email: { type: String, required: true },
+        isRead: { type: Boolean, default: false },
+      },
+    ],
     subject: {
       type: String,
       required: true,

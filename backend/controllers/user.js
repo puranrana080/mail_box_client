@@ -40,7 +40,14 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    return res.status(200).json({ message: "User Logged In ", success:true,token });
+    return res
+      .status(200)
+      .json({
+        message: "User Logged In ",
+        success: true,
+        token,
+        userEmail: user.email,
+      });
   } catch (error) {
     return res.status(500).json({ message: "Internl Server error", error });
   }

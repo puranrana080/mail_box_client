@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
+import { RiDeleteBinFill } from "react-icons/ri";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 import axios from "axios";
-import { setInboxMails } from "../redux/slice/inboxSlice";
+import { setInboxMails, deleteInboxMail } from "../redux/slice/inboxSlice";
 
 const Inbox = () => {
   const inboxMails = useSelector((state) => state.mail.inboxMails);
@@ -66,6 +68,21 @@ const Inbox = () => {
       dispatch(setInboxMails(updatedInbox));
     } catch (err) {
       console.log("Error marking mail as read", err);
+    }
+  };
+  const handleDelete = async (mail) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.patch(
+        `http://localhost:4000/api/mail/delete/${mail._id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      dispatch(deleteInboxMail(mail._id));
+    } catch (error) {
+      console.log("Delete mail error:", error);
     }
   };
 
@@ -135,8 +152,7 @@ const Inbox = () => {
           <div
             key={mail._id}
             className="d-flex align-items-center p-2 border-bottom"
-            style={{ cursor: "pointer" }}
-            onClick={() => handleMailClick(mail)}
+            // style={{ cursor: "pointer" }}
           >
             <div
               style={{
@@ -150,19 +166,41 @@ const Inbox = () => {
             ></div>
             {/* LEFT: From Email */}
             <div
-              style={{ width: "250px", fontWeight: isRead ? "normal" : "bold" }}
+              style={{
+                width: "250px",
+                cursor: "pointer",
+                fontWeight: isRead ? "normal" : "bold",
+              }}
+              onClick={() => handleMailClick(mail)}
             >
               {mail.from?.email}
             </div>
 
             {/* SUBJECT — starts from middle area */}
             <div
+              onClick={() => handleMailClick(mail)}
               style={{
                 flexBasis: "70%",
                 fontWeight: isRead ? "normal" : "bold",
+                cursor: "pointer",
               }}
             >
               {mail.subject}
+            </div>
+            <div title="Delete">
+              {/* <RiDeleteBinFill />
+               */}
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip id="tooltip-delete">Delete</Tooltip>}
+              >
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleDelete(mail)}
+                >
+                  <RiDeleteBinFill />
+                </div>
+              </OverlayTrigger>
             </div>
           </div>
         );

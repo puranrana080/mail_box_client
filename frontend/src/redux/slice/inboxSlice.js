@@ -10,7 +10,11 @@ export const inboxSlice = createSlice({
     setInboxMails: (state, action) => {
       state.inboxMails = action.payload;
     },
+    deleteInboxMail: (state, action) => {
+      const mailId = action.payload;
+      state.inboxMails = state.inboxMails.filter((mail) => mail._id !== mailId);
+    },
   },
 });
-export const { setInboxMails } = inboxSlice.actions;
+export const { setInboxMails, deleteInboxMail } = inboxSlice.actions;
 export default inboxSlice.reducer;

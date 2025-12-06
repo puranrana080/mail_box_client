@@ -23,11 +23,11 @@ export const getInboxMails = async (req, res) => {
   try {
     const userEmail = req.user.email;
 
-    const inbox = await Mail.find({ "to.email": userEmail })
+    const inbox = await Mail.find({
+      to: { $elemMatch: { email: userEmail, isDeleted: false } },
+    })
       .populate("from", "email")
-      .sort({
-        createdAt: -1,
-      });
+      .sort({ createdAt: -1 });
 
     return res
       .status(200)
@@ -54,5 +54,20 @@ export const markMailAsRead = async (req, res) => {
   } catch (error) {
     console.log(err);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const deleteMail = async (req, res) => {
+  const userEmail = req.user.email;
+  const { mailId } = req.params;
+  try {
+    await Mail.updateOne(
+      { _id: mailId, "to.email": userEmail },
+      { $set: { "to.$.isDeleted": true } }
+    );
+
+    return res.status(200).json({ message: "Email deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };

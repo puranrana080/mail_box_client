@@ -7,6 +7,7 @@ const mailSchema = mongoose.Schema(
       {
         email: { type: String, required: true },
         isRead: { type: Boolean, default: false },
+        isDeleted: { type: Boolean, default: false },
       },
     ],
     subject: {

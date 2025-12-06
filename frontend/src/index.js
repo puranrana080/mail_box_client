@@ -3,14 +3,15 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { ToastContainer } from "react-toastify";
+import { Provider } from "react-redux";
+import { store } from "./redux/store.js";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import { StoreContextProvider } from "./storeContext/storeContext.js";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <StoreContextProvider>
+  <Provider store={store}>
     <App />
     <ToastContainer />
-  </StoreContextProvider>
+  </Provider>
 );

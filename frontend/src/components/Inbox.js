@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { RiDeleteBinFill } from "react-icons/ri";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+// import { RiDeleteBinFill } from "react-icons/ri";
+// import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import MailList from "./MailList";
+import ViewMail from "./ViewMail";
 
 import axios from "axios";
 import { setInboxMails, deleteInboxMail } from "../redux/slice/inboxSlice";
@@ -12,7 +14,6 @@ const Inbox = () => {
   const dispatch = useDispatch();
   let userEmail = localStorage.getItem("email");
   const [selectedMail, setSelectedMail] = useState(null);
-  console.log("sdfs", inboxMails);
 
   const unreadCount = inboxMails.filter((mail) => {
     const recipient = mail.to.find((t) => t.email === userEmail);
@@ -28,8 +29,6 @@ const Inbox = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         dispatch(setInboxMails(response.data.inbox));
-
-        console.log("Inbox Mails", response);
       } catch (error) {
         console.log("Error fetching Inbox mails,", error);
       }
@@ -88,51 +87,13 @@ const Inbox = () => {
 
   if (selectedMail) {
     return (
-      <Container>
-        <button
-          className="btn btn-sm btn-outline-secondary mb-3"
-          onClick={() => setSelectedMail(null)}
-        >
-          ⬅ Back
-        </button>
+      <>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <h3 style={{ margin: 0 }}>{selectedMail.subject}</h3>
-
-          <span style={{ fontSize: "14px", color: "gray" }}>
-            {new Date(selectedMail.createdAt).toLocaleString()}
-          </span>
-        </div>
-
-        <hr />
-        <p>
-          <strong>From:</strong> {selectedMail.from.email}
-        </p>
-
-        <div className="d-flex " style={{ marginBottom: "20px" }}>
-          <div>
-            <strong>To:</strong>
-          </div>
-          <div style={{ marginLeft: "25px" }}>
-            {selectedMail.to.map((m) => (
-              <p key={m.email} style={{ margin: 0 }}>
-                {m.email}
-              </p>
-            ))}
-          </div>
-        </div>
-
-        {/* Render HTML body */}
-        <div
-          dangerouslySetInnerHTML={{ __html: selectedMail.contentHTML }}
-        ></div>
-      </Container>
+        <ViewMail
+          mail={selectedMail}
+          onClickMail={() => setSelectedMail(null)}
+        />
+      </>
     );
   }
 
@@ -144,67 +105,13 @@ const Inbox = () => {
       <hr />
 
       {/* <div> */}
-      {inboxMails.map((mail) => {
-        const recipient = mail.to.find((t) => t.email === userEmail);
-        const isRead = recipient?.isRead;
-
-        return (
-          <div
-            key={mail._id}
-            className="d-flex align-items-center p-2 border-bottom"
-            // style={{ cursor: "pointer" }}
-          >
-            <div
-              style={{
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                marginRight: "10px",
-
-                backgroundColor: isRead ? "transparent" : "#08c9ebff",
-              }}
-            ></div>
-            {/* LEFT: From Email */}
-            <div
-              style={{
-                width: "250px",
-                cursor: "pointer",
-                fontWeight: isRead ? "normal" : "bold",
-              }}
-              onClick={() => handleMailClick(mail)}
-            >
-              {mail.from?.email}
-            </div>
-
-            {/* SUBJECT — starts from middle area */}
-            <div
-              onClick={() => handleMailClick(mail)}
-              style={{
-                flexBasis: "70%",
-                fontWeight: isRead ? "normal" : "bold",
-                cursor: "pointer",
-              }}
-            >
-              {mail.subject}
-            </div>
-            <div title="Delete">
-              {/* <RiDeleteBinFill />
-               */}
-              <OverlayTrigger
-                placement="top"
-                overlay={<Tooltip id="tooltip-delete">Delete</Tooltip>}
-              >
-                <div
-                  style={{ cursor: "pointer" }}
-                  onClick={() => handleDelete(mail)}
-                >
-                  <RiDeleteBinFill />
-                </div>
-              </OverlayTrigger>
-            </div>
-          </div>
-        );
-      })}
+      <MailList
+        mails={inboxMails}
+        userEmail={userEmail}
+        type="inbox"
+        onClickMail={handleMailClick}
+        onDeleteMail={handleDelete}
+      />
     </Container>
   );
 };

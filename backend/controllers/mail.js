@@ -50,7 +50,9 @@ export const markMailAsRead = async (req, res) => {
     );
 
     await mail.save();
-    return res.status(200).json({ message: "Mail marked as read" });
+    return res
+      .status(200)
+      .json({ message: "Mail marked as read", success: true });
   } catch (error) {
     console.log(err);
     return res.status(500).json({ message: "Internal server error" });
@@ -66,8 +68,27 @@ export const deleteMail = async (req, res) => {
       { $set: { "to.$.isDeleted": true } }
     );
 
-    return res.status(200).json({ message: "Email deleted successfully" });
+    return res
+      .status(200)
+      .json({ message: "Email deleted successfully", success: true });
   } catch (error) {
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getSentMails = async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const sent = await Mail.find({ from: userId })
+      .populate("from", "email")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      message: "Sent mails fetched successfully",
+      success: true,
+      sent,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal Server Error", error });
   }
 };

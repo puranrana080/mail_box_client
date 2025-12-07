@@ -5,11 +5,13 @@ import Navbar from "react-bootstrap/Navbar";
 import MailForm from "./MailForm";
 import Inbox from "./Inbox";
 import Sent from "./Sent";
+import { useSelector } from "react-redux";
 
-// import EmailEditor from "./MailForm";
 
 const Home = () => {
-  const [tab, setTab] = useState("compose");
+  const [tab, setTab] = useState("inbox");
+  const count = useSelector((state) => state.mail.unreadCount);
+
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
@@ -18,9 +20,53 @@ const Home = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link onClick={() => setTab("compose")}>Compose</Nav.Link>
-              <Nav.Link onClick={() => setTab("inbox")}>Inbox</Nav.Link>
-              <Nav.Link onClick={() => setTab("sent")}>Sent</Nav.Link>
+              <Nav.Link
+                active={tab === "compose"}
+                onClick={() => setTab("compose")}
+              >
+                Compose
+              </Nav.Link>
+              <Nav.Link
+                active={tab === "inbox"}
+                onClick={() => setTab("inbox")}
+              >
+                Inbox
+                {count > 0 && (
+                  <span
+                    style={{
+                      background: "red",
+                      color: "white",
+                      borderRadius: "12px",
+                      padding: "2px 6px",
+                      fontSize: "12px",
+                      marginLeft: "6px",
+                    }}
+                  >
+                    {count}
+                  </span>
+                )}
+              </Nav.Link>
+              <Nav.Link active={tab === "sent"} onClick={() => setTab("sent")}>
+                Sent
+              </Nav.Link>
+            </Nav>
+            <Nav className="ms-auto d-flex align-items-center">
+              {/* USER EMAIL */}
+              <span className="me-3 fw-bold">
+                {localStorage.getItem("email")}
+              </span>
+
+              {/* LOGOUT BUTTON */}
+              <button
+                className="btn btn-danger btn-sm"
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("email");
+                  window.location.reload();
+                }}
+              >
+                Logout
+              </button>
             </Nav>
           </Navbar.Collapse>
         </Container>

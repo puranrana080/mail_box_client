@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-// import { RiDeleteBinFill } from "react-icons/ri";
-// import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import MailList from "./MailList";
 import ViewMail from "./ViewMail";
-
+import { store } from "../redux/store";
 import axios from "axios";
-import { setInboxMails, deleteInboxMail } from "../redux/slice/inboxSlice";
+import {
+  setInboxMails,
+  deleteInboxMail,
+  setUnreadCount,
+} from "../redux/slice/inboxSlice";
 
 const Inbox = () => {
   const inboxMails = useSelector((state) => state.mail.inboxMails);
@@ -19,8 +21,10 @@ const Inbox = () => {
     const recipient = mail.to.find((t) => t.email === userEmail);
     return recipient && !recipient.isRead;
   }).length;
+  dispatch(setUnreadCount(unreadCount));
 
   useEffect(() => {
+    let interval;
     async function fetchInboxMails() {
       try {
         const token = localStorage.getItem("token");
@@ -28,12 +32,24 @@ const Inbox = () => {
           "http://localhost:4000/api/mail/inboxMail",
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        dispatch(setInboxMails(response.data.inbox));
+        const newMails = response.data.inbox;
+        const currentMails = store.getState().mail.inboxMails;
+        if (JSON.stringify(currentMails) !== JSON.stringify(newMails)) {
+          dispatch(setInboxMails(newMails));
+          console.log("inside");
+        }
+        // dispatch(setInboxMails(response.data.inbox));
       } catch (error) {
         console.log("Error fetching Inbox mails,", error);
       }
     }
     fetchInboxMails();
+    interval = setInterval(() => {
+      fetchInboxMails();
+      console.log("fetching newmails");
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, [dispatch]);
 
   const handleMailClick = async (mail) => {
@@ -88,7 +104,6 @@ const Inbox = () => {
   if (selectedMail) {
     return (
       <>
-
         <ViewMail
           mail={selectedMail}
           onClickMail={() => setSelectedMail(null)}

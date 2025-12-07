@@ -5,12 +5,15 @@ import {
   getInboxMails,
   markMailAsRead,
   deleteMail,
+  getSentMails,
 } from "../controllers/mail.js";
 const router = express.Router();
 
 router.post("/sendMail", authenticate, handleSendMail);
 
 router.get("/inboxMail", authenticate, getInboxMails);
+
+router.get("/sentMail", authenticate, getSentMails);
 
 router.patch("/mark-read/:mailId", authenticate, markMailAsRead);
 

@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   inboxMails: [],
   sentMails: [],
+   unreadCount: 0,
 };
 export const inboxSlice = createSlice({
   name: "inbox",
@@ -14,12 +15,15 @@ export const inboxSlice = createSlice({
     setSentMails: (state, action) => {
       state.sentMails = action.payload;
     },
+    setUnreadCount:(state,action)=>{
+        state.unreadCount=action.payload;
+    },
     deleteInboxMail: (state, action) => {
       const mailId = action.payload;
       state.inboxMails = state.inboxMails.filter((mail) => mail._id !== mailId);
     },
   },
 });
-export const { setInboxMails, setSentMails, deleteInboxMail } =
+export const { setInboxMails, setSentMails, deleteInboxMail, setUnreadCount } =
   inboxSlice.actions;
 export default inboxSlice.reducer;

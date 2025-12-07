@@ -44,7 +44,14 @@ const ViewMail = ({ mail, onClickMail }) => {
       </div>
 
       {/* Render HTML body */}
-      <div dangerouslySetInnerHTML={{ __html: mail.contentHTML }}></div>
+      <div
+        style={{
+          paddingLeft: "30px",
+          marginTop: "10px",
+        }}
+        dangerouslySetInnerHTML={{ __html: mail.contentHTML }}
+      ></div>
+      <hr />
     </Container>
   );
 };
